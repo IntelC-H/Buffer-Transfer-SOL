@@ -6,7 +6,13 @@
     <title>Buffer in Browser</title>
 </head>
 <body>
-    <button onclick="Solpay()"></button>
+    This is:
+    <br>
+    1. Test program to transfer sol in Phantom wallet using only javascript.
+    <button onclick="Solpay()" style="height: 50px; width: 200px;">Pay using Phantom wallet</button>
+    <br><br>
+    2. Test program to get the NFT Token address from my Phantom wallet.
+    <button onclick="getTokenAddress()" style="height: 50px; width: 200px;">Get token address</button>
     <!-- 
     This way is to Enable for using Buffer in browser.
         1. yarn add browserify buffer
@@ -57,10 +63,39 @@
                     const txid = await connection.sendRawTransaction(signedTransaction.serialize());                // Send the transaction
                     console.log('[ ] Transaction sent with ID:', txid);
                 } catch (err) {
-                    console.error('[ ] Failed to connect to Phantom wallet or send transaction:', err);
+                    console.log('[ ] Failed to connect to Phantom wallet or send transaction:', err);
                 }
             } else {
                 console.log('[ ] Phantom wallet is not installed');
+            }
+        }
+
+        async function getTokenAddress() {
+            const { Connection, PublicKey, LAMPORTS_PER_SOL, clusterApiUrl, Keypair, Transaction, SystemProgram } = solanaWeb3;
+
+            const connection = new Connection(clusterApiUrl('devnet'));                                             // Connect to the Solana devnet
+
+            if (window.solana && window.solana.isPhantom) {
+                const res = await window.solana.connect();
+                const walletPublicKey = res.publicKey;
+                try {
+                // Fetch all token accounts of the wallet
+                const tokenAccounts = await connection.getParsedTokenAccountsByOwner(walletPublicKey, {
+                programId: new solanaWeb3.PublicKey("TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA")
+                });
+
+                // Filter token accounts to find NFTs
+                const nftMintAddresses = tokenAccounts.value
+                .filter((tokenAccount) => {
+                    const accountData = tokenAccount.account.data.parsed.info;
+                    return accountData.tokenAmount.amount === "1" && accountData.tokenAmount.decimals === 0;
+                })
+                .map((tokenAccount) => tokenAccount.account.data.parsed.info.mint);
+
+                console.log('[ ] NFT Mint Addresses:', nftMintAddresses);
+            } catch (err) {
+                console.log('[ ] Error retrieving NFT mint addresses:', err);
+            }
             }
         }
     </script>

@@ -36,6 +36,14 @@ This is the enabling Buffer in browser and transfering sol using only javascript
         // Example usage of umi
         console.log(umi);
 
+※ In case of <br>@solana/spl-token</br>, you have to use this code: 
+
+        // index.js
+        const splToken = require('@solana/spl-token');
+        
+        // Example usage of spl-token
+        console.log(splToken);
+
 4. Create webpack.config.js:
 
         // webpack.config.js

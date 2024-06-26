@@ -31,18 +31,16 @@ This is the enabling Buffer in browser and transfering sol using only javascript
         
         For example:
         // index.js
-        import * as umi from '@metaplex-foundation/umi-bundle-defaults';
-        
-        // Example usage of umi
-        console.log(umi);
+        const umi = require('@metaplex-foundation/umi-bundle-defaults');
+        window.umi = umi;
+        console.log("[ ] @metaplex-foundation/umi-bundle-defaults: ", umi);
 
 ※ In case of <b>@solana/spl-token</b>, you have to use this code: 
 
         // index.js
         const splToken = require('@solana/spl-token');
-        
-        // Example usage of spl-token
-        console.log(splToken);
+        window.splToken = splToken;
+        console.log("[ ] @solana/spl-token", splToken);
 
 4. Create webpack.config.js:
 
@@ -52,7 +50,7 @@ This is the enabling Buffer in browser and transfering sol using only javascript
         module.exports = {
           entry: './index.js',
           output: {
-            filename: 'bundle.js',
+            filename: 'bundle_umi.js',
             path: path.resolve(__dirname, 'dist')
           },
           mode: 'development'
@@ -109,5 +107,8 @@ This is the enabling Buffer in browser and transfering sol using only javascript
         <body>
           <h1>UMI Bundle Defaults in Browser</h1>
           <script src="dist/bundle.js"></script>
+          <script>
+            console.log("[ ] umi status: ", umi);
+          </script>
         </body>
         </html>

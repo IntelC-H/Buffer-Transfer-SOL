@@ -49,6 +49,41 @@ This is the enabling Buffer in browser and transfering sol using only javascript
           },
           mode: 'development'
         };
+   
+※ In case of @solana/spl-token, you have to use this code: 
+
+        const path = require('path');
+        const webpack = require('webpack');
+        
+        module.exports = {
+          entry: './index.js',
+          output: {
+            filename: 'bundle_splToken.js',
+            path: path.resolve(__dirname, 'dist')
+          },
+          mode: 'development',
+          resolve: {
+            fallback: {
+              // Provide polyfills for Node.js modules that are used in browser environment
+              crypto: require.resolve('crypto-browserify'),
+              stream: require.resolve('stream-browserify'),
+              util: require.resolve('util'),
+              vm: require.resolve('vm-browserify'),
+              process: require.resolve('process/browser')
+            }
+          },
+          plugins: [
+            // DefinePlugin to set process.env.NODE_ENV
+            new webpack.DefinePlugin({
+              'process.env.NODE_ENV': JSON.stringify('development')
+            }),
+            new webpack.ProvidePlugin({
+              process: 'process/browser',
+              Buffer: ['buffer', 'Buffer']
+              // Add other shims as needed
+            })
+          ]
+        };
 
 6. Bundle your code:
 
